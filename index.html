@@ -1,0 +1,338 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Akshat Bhriguvanshi</title>
+<meta name="description" content="Akshat Bhriguvanshi builds autonomous agents, AI APIs, mobile games and on-chain apps.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: left-aligned build log. Hero = name + the trading agent's decision pipeline; then featured work, compact project index, git-log timeline, stack, contact. */
+:root{
+  --bg:#EDF0F5; --surface:#FFFFFF; --ink:#0F1B2D; --muted:#5A6578; --line:#D2D9E4;
+  --accent:#2343D0; --accent-soft:#E2E8FF; --signal:#C98A0C; --signal-soft:#FFF1D2;
+  --ok:#1D7A4E; --stop:#B4362A;
+  --f-display:"Bricolage Grotesque", "Avenir Next", system-ui, sans-serif;
+  --f-body:"IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --f-mono:"JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  --s-xs:.75rem; --s-sm:.875rem; --s-md:1rem; --s-lg:1.25rem; --s-xl:1.75rem; --s-2xl:2.5rem; --s-hero:clamp(2.75rem, 8vw, 5.75rem);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0B1220; --surface:#121B2E; --ink:#E6ECF5; --muted:#94A1B6; --line:#24324C;
+    --accent:#86A0FF; --accent-soft:#1B2650; --signal:#F2BC4B; --signal-soft:#3A2D10;
+    --ok:#5BC98E; --stop:#F07A6C; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0B1220; --surface:#121B2E; --ink:#E6ECF5; --muted:#94A1B6; --line:#24324C;
+  --accent:#86A0FF; --accent-soft:#1B2650; --signal:#F2BC4B; --signal-soft:#3A2D10;
+  --ok:#5BC98E; --stop:#F07A6C; color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{margin:0; background:var(--bg); color:var(--ink); font-family:var(--f-body); font-size:var(--s-md); line-height:1.6;
+  padding-left:max(16px, env(safe-area-inset-left, 0px)); padding-right:max(16px, env(safe-area-inset-right, 0px));}
+a{color:var(--accent); text-underline-offset:3px}
+a:focus-visible, button:focus-visible{outline:2px solid var(--accent); outline-offset:3px; border-radius:4px}
+.wrap{max-width:1080px; margin:0 auto}
+h1,h2,h3{font-family:var(--f-display); text-wrap:balance; margin:0; line-height:1.08}
+p{margin:0}
+.label{font-family:var(--f-mono); font-size:var(--s-xs); letter-spacing:.08em; text-transform:uppercase; color:var(--muted)}
+.mono{font-family:var(--f-mono)}
+
+/* top bar */
+.top{display:flex; justify-content:space-between; align-items:center; gap:16px; padding-block:22px; flex-wrap:wrap}
+.mark{display:flex; align-items:center; gap:10px; font-family:var(--f-mono); font-size:var(--s-sm); color:var(--ink); text-decoration:none}
+.mono-badge{width:34px; height:34px; border-radius:8px; background:var(--ink); color:var(--bg); display:grid; place-items:center; font-family:var(--f-display); font-weight:800; font-size:15px; letter-spacing:-.02em}
+.nav{display:flex; gap:20px; flex-wrap:wrap; font-size:var(--s-sm)}
+.nav a{color:var(--muted); text-decoration:none}
+.nav a:hover{color:var(--ink)}
+
+/* hero */
+.hero{padding-block:clamp(32px, 7vw, 72px) 40px; display:grid; gap:36px}
+.hero h1{font-size:var(--s-hero); font-weight:800; letter-spacing:-.035em}
+.hero h1 span{display:block; color:var(--accent)}
+.lede{font-size:clamp(1.1rem, 2.2vw, 1.35rem); max-width:40ch; color:var(--ink)}
+.meta{display:flex; flex-wrap:wrap; gap:10px 22px; font-family:var(--f-mono); font-size:var(--s-sm); color:var(--muted)}
+.meta b{color:var(--ink); font-weight:500}
+.cta{display:flex; flex-wrap:wrap; gap:12px}
+.btn{display:inline-flex; align-items:center; gap:8px; padding:11px 18px; border-radius:999px; font-weight:600; font-size:var(--s-sm); text-decoration:none; border:1px solid var(--line); color:var(--ink); background:var(--surface); cursor:pointer; font-family:var(--f-body)}
+.btn.primary{background:var(--ink); color:var(--bg); border-color:var(--ink)}
+.btn:hover{border-color:var(--accent)}
+
+/* pipeline */
+.pipe{background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:20px; display:grid; gap:14px}
+.pipe-head{display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap; align-items:baseline}
+.live{display:inline-flex; align-items:center; gap:8px; font-family:var(--f-mono); font-size:var(--s-xs); color:var(--signal)}
+.live i{width:8px; height:8px; border-radius:50%; background:var(--signal); animation:blink 1.6s infinite}
+.stages{list-style:none; margin:0; padding:0; display:grid; grid-template-columns:repeat(6, minmax(0,1fr)); gap:8px; counter-reset:st}
+.stage{position:relative; border:1px solid var(--line); border-radius:10px; padding:12px 12px 14px; min-width:0; animation:pulse 9s infinite; animation-delay:calc(var(--i) * 1.5s)}
+.stage .k{font-family:var(--f-mono); font-size:11px; color:var(--muted); display:block}
+.stage .n{font-family:var(--f-display); font-weight:700; font-size:1rem; display:block; margin-top:4px}
+.stage .d{font-size:12.5px; color:var(--muted); display:block; margin-top:4px; line-height:1.4}
+.stage:not(:last-child)::after{content:"→"; position:absolute; right:-9px; top:50%; transform:translateY(-50%); font-family:var(--f-mono); color:var(--muted); font-size:12px; background:var(--surface); line-height:1}
+.pipe-foot{font-size:var(--s-sm); color:var(--muted)}
+.pipe-foot b{color:var(--ink); font-weight:600}
+@keyframes pulse{0%,14%{border-color:var(--accent); background:var(--accent-soft)} 18%,100%{border-color:var(--line); background:transparent}}
+@keyframes blink{50%{opacity:.25}}
+@media (prefers-reduced-motion: reduce){.stage,.live i{animation:none}}
+@media (max-width:860px){.stages{grid-template-columns:repeat(3, minmax(0,1fr))} .stage:nth-child(3)::after{display:none}}
+@media (max-width:480px){.stages{grid-template-columns:repeat(2, minmax(0,1fr))} .stage:nth-child(3)::after{display:inline} .stage:nth-child(even)::after{display:none}}
+
+/* sections */
+section{padding-block:56px; border-top:1px solid var(--line)}
+.sec-head{display:flex; justify-content:space-between; align-items:baseline; gap:16px; flex-wrap:wrap; margin-bottom:28px}
+.sec-head h2{font-size:var(--s-2xl); letter-spacing:-.025em}
+
+/* featured */
+.feature{display:grid; grid-template-columns:minmax(0,1.05fr) minmax(0,1fr); gap:32px; padding-block:28px}
+.feature + .feature{border-top:1px dashed var(--line)}
+.feature h3{font-size:var(--s-xl); letter-spacing:-.02em}
+.feature .sub{color:var(--muted); margin-top:10px; max-width:52ch}
+.ftop{display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-bottom:12px}
+.chip{font-family:var(--f-mono); font-size:11.5px; padding:3px 9px; border-radius:6px; border:1px solid var(--line); color:var(--muted); white-space:nowrap}
+.chip.lang{color:var(--accent); border-color:var(--accent); background:var(--accent-soft)}
+.chip.priv{color:var(--signal); border-color:var(--signal); background:var(--signal-soft)}
+.points{list-style:none; margin:0; padding:0; display:grid; gap:12px}
+.points li{display:grid; grid-template-columns:auto 1fr; gap:12px; font-size:15px; min-width:0}
+.points li::before{content:""; width:6px; height:6px; margin-top:.62em; border-radius:1px; background:var(--accent)}
+.points b{font-weight:600}
+.stack-line{display:flex; flex-wrap:wrap; gap:6px; margin-top:18px}
+.links{display:flex; gap:18px; flex-wrap:wrap; margin-top:18px; font-size:var(--s-sm); font-weight:600}
+.cfg{margin-top:18px; background:var(--bg); border:1px solid var(--line); border-radius:10px; padding:14px 16px; font-family:var(--f-mono); font-size:12.5px; overflow-x:auto; line-height:1.7; white-space:pre; color:var(--muted)}
+.cfg .c{color:var(--ink)} .cfg .v{color:var(--signal)}
+
+/* project index */
+.grid{display:grid; grid-template-columns:repeat(auto-fit, minmax(min(100%, 300px), 1fr)); gap:16px}
+.card{background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:20px; display:flex; flex-direction:column; gap:10px; min-width:0}
+.card h3{font-size:var(--s-lg); letter-spacing:-.01em}
+.card p{font-size:14.5px; color:var(--muted)}
+.card .row{display:flex; justify-content:space-between; gap:10px; align-items:center; flex-wrap:wrap}
+.card .yr{font-family:var(--f-mono); font-size:12px; color:var(--muted)}
+.card .links{margin-top:auto; padding-top:6px}
+
+/* timeline */
+.log{font-family:var(--f-mono); font-size:13.5px; background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:8px 0; overflow-x:auto}
+.log-row{display:grid; grid-template-columns:96px 22px minmax(0,1fr); align-items:start; padding:9px 20px; gap:8px}
+.log-row:hover{background:var(--bg)}
+.log-row time{color:var(--muted); font-variant-numeric:tabular-nums}
+.dot{width:10px; height:10px; border-radius:50%; border:2px solid var(--accent); margin-top:5px; background:var(--surface)}
+.dot.now{background:var(--signal); border-color:var(--signal)}
+.log-row .msg{color:var(--ink); min-width:0}
+.log-row .msg em{font-style:normal; color:var(--accent)}
+.log-row .msg small{display:block; color:var(--muted); font-size:12px; margin-top:2px; font-family:var(--f-body)}
+
+/* stack */
+.stack{display:grid; grid-template-columns:repeat(auto-fit, minmax(min(100%, 220px), 1fr)); gap:28px}
+.stack h3{font-family:var(--f-mono); font-weight:500; font-size:var(--s-xs); letter-spacing:.08em; text-transform:uppercase; color:var(--muted); margin-bottom:12px}
+.stack ul{list-style:none; margin:0; padding:0; display:grid; gap:7px; font-size:15px}
+.bars{display:grid; gap:10px; margin-bottom:36px}
+.bar{display:grid; grid-template-columns:110px minmax(0,1fr) 54px; gap:12px; align-items:center; font-size:var(--s-sm)}
+.bar .t{height:8px; background:var(--line); border-radius:4px; overflow:hidden}
+.bar .t span{display:block; height:100%; background:var(--accent); border-radius:4px}
+.bar .p{font-family:var(--f-mono); font-size:12px; color:var(--muted); text-align:right; font-variant-numeric:tabular-nums}
+
+/* contact */
+.contact{display:grid; gap:20px; padding-bottom:24px}
+.contact h2{font-size:clamp(2rem, 5vw, 3.25rem); letter-spacing:-.03em; max-width:18ch}
+.mailrow{display:flex; flex-wrap:wrap; align-items:center; gap:12px}
+.mail{font-family:var(--f-mono); font-size:clamp(.95rem, 2.4vw, 1.15rem); padding:12px 16px; border:1px solid var(--line); border-radius:10px; background:var(--surface); user-select:all; overflow-wrap:anywhere}
+.toast{font-family:var(--f-mono); font-size:var(--s-xs); color:var(--ok)}
+footer{padding-block:28px 40px; border-top:1px solid var(--line); display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap; font-family:var(--f-mono); font-size:var(--s-xs); color:var(--muted)}
+
+@media (max-width:820px){ .feature{grid-template-columns:1fr; gap:20px} }
+@media (max-width:480px){ .log-row{grid-template-columns:78px 18px minmax(0,1fr); padding:9px 14px} .bar{grid-template-columns:84px minmax(0,1fr) 46px} .nav{gap:14px} }
+</style>
+
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <a class="mark" href="#top"><span class="mono-badge" aria-hidden="true">AB</span>akshatttt321</a>
+    <nav class="nav" aria-label="Sections">
+      <a href="#work">Work</a><a href="#projects">Projects</a><a href="#log">Log</a><a href="#stack">Stack</a><a href="#contact">Contact</a>
+    </nav>
+  </header>
+
+  <main id="top">
+    <div class="hero">
+      <div style="display:grid; gap:22px">
+        <h1>Akshat <span>Bhriguvanshi</span></h1>
+        <p class="lede">I build software that has to make decisions on its own: trading agents with hard risk limits, AI scoring APIs, GPS games and on-chain apps.</p>
+        <div class="meta">
+          <span><b>VIT Bhopal</b></span>
+          <span>Bhopal, India</span>
+          <span>Python · JavaScript · Dart</span>
+        </div>
+        <div class="cta">
+          <a class="btn primary" href="#work">See the work</a>
+          <a class="btn" href="https://github.com/akshatttt321" target="_blank" rel="noopener">GitHub ↗</a>
+        </div>
+      </div>
+
+      <div class="pipe" aria-label="Decision loop of the trading agent">
+        <div class="pipe-head">
+          <span class="label">trading-agent · one decision cycle</span>
+          <span class="live"><i></i>paper · testnet · live</span>
+        </div>
+        <ol class="stages">
+          <li class="stage" style="--i:0"><span class="k">market_data.py</span><span class="n">Read</span><span class="d">Prices, positions, journal</span></li>
+          <li class="stage" style="--i:1"><span class="k">llm.py</span><span class="n">Propose</span><span class="d">Model emits a structured Decision</span></li>
+          <li class="stage" style="--i:2"><span class="k">llm.py</span><span class="n">Verify</span><span class="d">Skeptic model may veto or shrink</span></li>
+          <li class="stage" style="--i:3"><span class="k">risk.py</span><span class="n">Gate</span><span class="d">Leverage, stops, daily-loss halt</span></li>
+          <li class="stage" style="--i:4"><span class="k">rr_model.py</span><span class="n">Size</span><span class="d">R:R ≥ 1.5, fractional Kelly</span></li>
+          <li class="stage" style="--i:5"><span class="k">learner.py</span><span class="n">Learn</span><span class="d">R-multiples adjust future size</span></li>
+        </ol>
+        <p class="pipe-foot"><b>The LLM proposes, a second LLM audits, and code decides.</b> If the verifier can't be reached, the cycle adds no new risk.</p>
+      </div>
+    </div>
+
+    <section id="work">
+      <div class="sec-head"><h2>Selected work</h2><span class="label">2 projects</span></div>
+
+      <article class="feature">
+        <div>
+          <div class="ftop"><span class="chip lang">Python</span><span class="chip">2026</span><span class="chip">Hyperliquid · Polymarket</span></div>
+          <h3>Trading Agent</h3>
+          <p class="sub">An autonomous agent that trades Hyperliquid perps and spot plus Polymarket prediction markets. Two language models argue over every trade, and a deterministic risk layer has the final say.</p>
+          <div class="stack-line">
+            <span class="chip">Gemini / OpenAI / Anthropic</span><span class="chip">Hyperliquid SDK</span><span class="chip">py-clob-client</span><span class="chip">SQLite</span><span class="chip">Docker</span><span class="chip">Caddy</span>
+          </div>
+          <div class="links"><a href="https://github.com/akshatttt321/trading-agent" target="_blank" rel="noopener">Source ↗</a></div>
+        </div>
+        <div>
+          <ul class="points">
+            <li><span><b>Two-model loop.</b> A proposer emits a structured decision; an independent verifier with a skeptic prompt must approve anything that adds risk. Vetoes are journaled.</span></li>
+            <li><span><b>Hard risk gate.</b> Leverage and exposure caps, mandatory stop-loss, order cooldown, a daily-loss halt and a drawdown kill that flattens everything and refuses to restart.</span></li>
+            <li><span><b>Online learner.</b> Each closed trade becomes an R-multiple reward for its setup context, which scales future position size between 0.25× and 1×.</span></li>
+            <li><span><b>Safe to deploy.</b> One-command VPS deploy runs preflight checks inside the container first. A static dashboard shows equity, the decision feed and a kill switch.</span></li>
+          </ul>
+<div class="cfg" aria-label="Excerpt of how live mode is unlocked"><span class="c">mode:</span> <span class="v">live</span>        <span># config.yaml</span>
+<span class="c">LIVE_TRADING_ACK=</span><span class="v">I_UNDERSTAND_THIS_IS_REAL_MONEY…</span>
+<span># without the exact string, the agent refuses to start</span></div>
+        </div>
+      </article>
+
+      <article class="feature">
+        <div>
+          <div class="ftop"><span class="chip lang">Dart · Flutter</span><span class="chip">2026</span><span class="chip priv">Private repo</span></div>
+          <h3>Manhunt</h3>
+          <p class="sub">Real-world hide and seek for phones. Runners hide inside a zone that shrinks over the game, hunters see everyone on a timed GPS ping, and tags are confirmed by proximity. One codebase for Android and iOS.</p>
+          <div class="stack-line">
+            <span class="chip">Flutter</span><span class="chip">Supabase</span><span class="chip">PostgreSQL</span><span class="chip">OpenStreetMap</span><span class="chip">Geolocator</span>
+          </div>
+          <div class="links"><span class="label">Source available on request</span></div>
+        </div>
+        <div>
+          <ul class="points">
+            <li><span><b>Host-tuned rules.</b> Duration, ping interval, head start, zone radius, shrink stages, grace period and tag distance are all set per game.</span></li>
+            <li><span><b>Shrinking zone.</b> Runners caught outside get a warning and a countdown, then disqualification when the grace period ends.</span></li>
+            <li><span><b>Fair tagging.</b> A hunter in range gets a Tag button. The runner confirms or disputes within 15 seconds, and the host rules on disputes.</span></li>
+            <li><span><b>Offline practice.</b> Bots that move, ping and tag, plus per-game results and monthly and lifetime leaderboards.</span></li>
+          </ul>
+        </div>
+      </article>
+    </section>
+
+    <section id="projects">
+      <div class="sec-head"><h2>More projects</h2><span class="label">Web3 · AI · Frontend</span></div>
+      <div class="grid">
+        <article class="card">
+          <div class="row"><span class="chip lang">JS · Python</span><span class="yr">Dec 2024</span></div>
+          <h3>Video Scoring API</h3>
+          <p>Built for the OnlineSales.ai hackathon with Team Chill Guys. Gemini writes a detailed rubric from brand criteria, scores an ad video step by step, and a second model turns the result into typed JSON. FastAPI backend with a React and Cloudinary front end.</p>
+          <div class="links"><a href="https://videog-generating-and-scoring-api.vercel.app" target="_blank" rel="noopener">Live demo ↗</a><a href="https://github.com/akshatttt321/video-scoring-api" target="_blank" rel="noopener">Source ↗</a></div>
+        </article>
+        <article class="card">
+          <div class="row"><span class="chip lang">Python</span><span class="yr">Dec 2024</span></div>
+          <h3>Background Removal API</h3>
+          <p>A Flask service from the same hackathon team. It crops an image to a bounding box, removes the background with rembg, and returns a hosted Cloudinary URL. Ships as a Docker image.</p>
+          <div class="links"><a href="https://github.com/akshatttt321/bgremove" target="_blank" rel="noopener">Source ↗</a></div>
+        </article>
+        <article class="card">
+          <div class="row"><span class="chip lang">JavaScript</span><span class="yr">Jul 2024</span></div>
+          <h3>NFT Marketplace</h3>
+          <p>A React marketplace with wallet connect through Web3Modal and wagmi, NFT data from Moralis, trending collections and a mint page. Covers Ethereum, Base, Arbitrum, Optimism and Linea, with GSAP and three.js motion.</p>
+          <div class="links"><a href="https://nft-marketplace-5i43.vercel.app/" target="_blank" rel="noopener">Live demo ↗</a><a href="https://github.com/akshatttt321/NFT_MARKETPLACE" target="_blank" rel="noopener">Source ↗</a></div>
+        </article>
+        <article class="card">
+          <div class="row"><span class="chip lang">JavaScript</span><span class="yr">Oct 2024</span></div>
+          <h3>GasSpent</h3>
+          <p>Paste a wallet address and pick a chain. It pulls every transaction receipt from that chain's explorer API and totals the gas you have paid, in ETH and in USD. Supports five EVM chains.</p>
+          <div class="links"><a href="https://gas-spent.vercel.app" target="_blank" rel="noopener">Live demo ↗</a><a href="https://github.com/akshatttt321/GasSpent" target="_blank" rel="noopener">Source ↗</a></div>
+        </article>
+        <article class="card">
+          <div class="row"><span class="chip lang">JavaScript</span><span class="yr">May 2024</span></div>
+          <h3>Cyber-Semantics Landing Page</h3>
+          <p>A company landing page in React and Tailwind with home, about, team, pricing and contact sections, built as reusable components.</p>
+          <div class="links"><a href="https://github.com/akshatttt321/Landing-Page" target="_blank" rel="noopener">Source ↗</a></div>
+        </article>
+      </div>
+    </section>
+
+    <section id="log">
+      <div class="sec-head"><h2>Build log</h2><span class="label">newest first</span></div>
+      <div class="log" role="list">
+        <div class="log-row" role="listitem"><time datetime="2026-10">2026-10</time><span class="dot now"></span><span class="msg">init <em>manhunt</em><small>Flutter + Supabase GPS game for Android and iOS</small></span></div>
+        <div class="log-row" role="listitem"><time datetime="2026-08">2026-08</time><span class="dot"></span><span class="msg">init <em>trading-agent</em><small>LLM proposer and verifier, risk gate, online learner, VPS deploy</small></span></div>
+        <div class="log-row" role="listitem"><time datetime="2024-12">2024-12</time><span class="dot"></span><span class="msg">ship <em>video-scoring-api</em> + <em>bgremove</em><small>OnlineSales.ai hackathon with Team Chill Guys</small></span></div>
+        <div class="log-row" role="listitem"><time datetime="2024-10">2024-10</time><span class="dot"></span><span class="msg">ship <em>GasSpent</em><small>Multi-chain gas tracker, deployed on Vercel</small></span></div>
+        <div class="log-row" role="listitem"><time datetime="2024-07">2024-07</time><span class="dot"></span><span class="msg">ship <em>NFT_MARKETPLACE</em><small>Wallet connect, minting and collections across five chains</small></span></div>
+        <div class="log-row" role="listitem"><time datetime="2024-05">2024-05</time><span class="dot"></span><span class="msg">ship <em>Landing-Page</em><small>First client-style React build</small></span></div>
+        <div class="log-row" role="listitem"><time datetime="2023-08">2023-08</time><span class="dot"></span><span class="msg">joined GitHub</span></div>
+      </div>
+    </section>
+
+    <section id="stack">
+      <div class="sec-head"><h2>Stack</h2><span class="label">code share across public repos</span></div>
+      <div class="bars" aria-label="Share of code by language">
+        <div class="bar"><span>JavaScript</span><span class="t"><span style="width:45.2%"></span></span><span class="p">45.2%</span></div>
+        <div class="bar"><span>Python</span><span class="t"><span style="width:41.1%"></span></span><span class="p">41.1%</span></div>
+        <div class="bar"><span>CSS</span><span class="t"><span style="width:9.1%"></span></span><span class="p">9.1%</span></div>
+        <div class="bar"><span>HTML</span><span class="t"><span style="width:4.1%"></span></span><span class="p">4.1%</span></div>
+        <div class="bar"><span>Other</span><span class="t"><span style="width:0.6%"></span></span><span class="p">0.6%</span></div>
+      </div>
+      <div class="stack">
+        <div><h3>Front end</h3><ul><li>React, Vite</li><li>Tailwind CSS</li><li>GSAP, three.js</li><li>Flutter (Dart)</li></ul></div>
+        <div><h3>Back end &amp; AI</h3><ul><li>FastAPI, Flask</li><li>Gemini, OpenAI, Anthropic APIs</li><li>Supabase, PostgreSQL, SQLite</li><li>rembg, Cloudinary</li></ul></div>
+        <div><h3>Web3</h3><ul><li>wagmi, viem, ethers.js</li><li>Web3Modal, Moralis</li><li>Hyperliquid, Polymarket</li><li>Etherscan-family APIs</li></ul></div>
+        <div><h3>Ops</h3><ul><li>Docker, Docker Compose</li><li>Caddy, systemd</li><li>Vercel, GitHub Pages</li><li>Hetzner VPS</li></ul></div>
+      </div>
+    </section>
+
+    <section id="contact" class="contact">
+      <span class="label">Contact</span>
+      <h2>Have something that needs building? Let's talk.</h2>
+      <div class="mailrow">
+        <span class="mail" id="mail">akshatpersonal321@gmail.com</span>
+        <button class="btn" id="copy" type="button">Copy email</button>
+        <a class="btn" href="https://github.com/akshatttt321" target="_blank" rel="noopener">GitHub ↗</a>
+        <span class="toast" id="toast" role="status" aria-live="polite"></span>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <span>© 2026 Akshat Bhriguvanshi</span>
+    <span>Bhopal, India</span>
+  </footer>
+</div>
+
+<script>
+document.getElementById('copy').addEventListener('click', function () {
+  var text = document.getElementById('mail').textContent.trim();
+  var toast = document.getElementById('toast');
+  function fallback() {
+    var r = document.createRange(); r.selectNodeContents(document.getElementById('mail'));
+    var s = window.getSelection(); s.removeAllRanges(); s.addRange(r);
+    toast.textContent = 'Selected. Press Ctrl/Cmd+C to copy.';
+  }
+  try {
+    navigator.clipboard.writeText(text).then(function () { toast.textContent = 'Copied'; }, fallback);
+  } catch (e) { fallback(); }
+});
+</script>
+</body>
+</html>
